@@ -1,5 +1,5 @@
 import classNames from "classnames";
-import React from "react";
+import React, { HTMLInputTypeAttribute } from "react";
 import type { ReactNode } from "react";
 
 import Label from "../Label";
@@ -11,6 +11,7 @@ import type { ClassName } from "types";
  * The props for the Field component.
  */
 export type Props = {
+  type?: HTMLInputTypeAttribute;
   /**
    * The content for caution validation.
    */
@@ -73,12 +74,21 @@ export type Props = {
   validationId?: string;
 };
 
-const generateHelp = (help: Props["help"], helpId: Props["helpId"]) =>
-  help && (
-    <p className="p-form-help-text" id={helpId}>
+const generateHelpText = ({
+  help,
+  helpId,
+  type,
+}: Pick<Props, "help" | "helpId" | "type">) =>
+  help ? (
+    <p
+      className={classNames("p-form-help-text", {
+        "is-tick-element": type === "checkbox" || type === "radio",
+      })}
+      id={helpId}
+    >
       {help}
     </p>
-  );
+  ) : null;
 
 const generateError = (
   error: Props["error"],
@@ -119,18 +129,23 @@ const generateLabel = (
   return labelNode;
 };
 
-const generateContent = (
-  isSelect: Props["isSelect"],
-  children: Props["children"],
-  labelFirst: Props["labelFirst"],
-  labelNode: JSX.Element | null,
-  help: Props["help"],
-  error: Props["error"],
-  caution: Props["caution"],
-  success: Props["success"],
-  validationId: string,
-  helpId: string
-) => (
+const generateContent = ({
+  type,
+  isSelect,
+  children,
+  labelFirst,
+  labelNode,
+  help,
+  error,
+  caution,
+  success,
+  validationId,
+  helpId,
+}: Partial<Props> & {
+  labelNode: JSX.Element | null;
+  validationId: string;
+  helpId: string;
+}) => (
   <div className="p-form__control u-clearfix">
     {isSelect ? (
       <div className="p-form-validation__select-wrapper">{children}</div>
@@ -138,12 +153,13 @@ const generateContent = (
       children
     )}
     {!labelFirst && labelNode}
-    {generateHelp(help, helpId)}
+    {generateHelpText({ helpId, help, type })}
     {generateError(error, caution, success, validationId)}
   </div>
 );
 
 const Field = ({
+  type,
   caution,
   children,
   className,
@@ -151,7 +167,6 @@ const Field = ({
   forId,
   help,
   helpId,
-  isSelect,
   label,
   labelClassName,
   labelFirst = true,
@@ -167,8 +182,9 @@ const Field = ({
     labelClassName,
     stacked
   );
-  const content = generateContent(
-    isSelect,
+
+  const content = generateContent({
+    type,
     children,
     labelFirst,
     labelNode,
@@ -177,8 +193,8 @@ const Field = ({
     caution,
     success,
     validationId,
-    helpId
-  );
+    helpId,
+  });
   return (
     <div
       className={classNames("p-form__group", "p-form-validation", className, {

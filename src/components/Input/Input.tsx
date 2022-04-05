@@ -133,6 +133,7 @@ const Input = ({
   }
   return (
     <Field
+      type={type}
       caution={caution}
       className={wrapperClassName}
       error={error}
