@@ -11,7 +11,10 @@ import type { ClassName } from "types";
  * The props for the Field component.
  */
 export type Props = {
-  type?: HTMLInputTypeAttribute;
+  /**
+   * Field type (not to be confused with the HTML input type)
+   */
+  fieldType?: HTMLInputTypeAttribute | "select";
   /**
    * The content for caution validation.
    */
@@ -40,10 +43,6 @@ export type Props = {
    * An id to give to the help element.
    */
   helpId?: string;
-  /**
-   * Whether the component is wrapping a select element.
-   */
-  isSelect?: boolean;
   /**
    * The label for the field.
    */
@@ -130,8 +129,7 @@ const generateLabel = (
 };
 
 const generateContent = ({
-  type,
-  isSelect,
+  fieldType,
   children,
   labelFirst,
   labelNode,
@@ -147,7 +145,7 @@ const generateContent = ({
   helpId: string;
 }) => (
   <div className="p-form__control u-clearfix">
-    {isSelect ? (
+    {fieldType === "select" ? (
       <div className="p-form-validation__select-wrapper">{children}</div>
     ) : (
       children
@@ -159,7 +157,7 @@ const generateContent = ({
 );
 
 const Field = ({
-  type,
+  fieldType,
   caution,
   children,
   className,
@@ -184,7 +182,7 @@ const Field = ({
   );
 
   const content = generateContent({
-    type,
+    fieldType,
     children,
     labelFirst,
     labelNode,

@@ -116,13 +116,13 @@ const Select = ({
 
   return (
     <Field
+      fieldType="select"
       caution={caution}
       className={wrapperClassName}
       error={error}
       forId={id}
       help={help}
       helpId={helpId}
-      isSelect={true}
       label={label}
       labelClassName={labelClassName}
       required={required}
