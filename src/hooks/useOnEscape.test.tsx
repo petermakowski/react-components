@@ -1,11 +1,11 @@
 import { renderHook } from "@testing-library/react-hooks";
-import { fireEvent } from "@testing-library/dom";
+import userEvent from "@testing-library/user-event";
 
 import { useOnEscape } from "./useOnEscape";
 
 it("calls the callback when the escape key is pressed", () => {
   const onEscape = jest.fn();
   renderHook(() => useOnEscape(onEscape));
-  fireEvent.keyDown(document, { key: "Escape", code: "Escape" });
+  userEvent.keyboard("{esc}");
   expect(onEscape).toHaveBeenCalled();
 });
