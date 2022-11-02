@@ -6,7 +6,7 @@ import { MutableRefObject, useCallback, useEffect, useRef } from "react";
  */
 export const useClickOutside = <E extends HTMLElement>(
   onClickOutside: () => void
-): MutableRefObject<E> => {
+): MutableRefObject<E | null> => {
   const ref = useRef<E | null>(null);
 
   const handleClickOutside = useCallback(
