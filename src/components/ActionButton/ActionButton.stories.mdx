@@ -1,5 +1,5 @@
 import { ArgsTable, Canvas, Meta, Story } from "@storybook/addon-docs";
-
+import { useState } from "react";
 import ActionButton from "./ActionButton";
 
 <Meta
@@ -28,7 +28,47 @@ ActionButton accepts the props from [Button](?path=/docs/button--base) in additi
 
 <Canvas>
   <Story name="Default">
-    <ActionButton appearance="positive">Click me!</ActionButton>
+    {() => {
+      const [isLoading, setIsLoading] = useState(false);
+      return (
+        <>
+          <ActionButton
+            appearance="positive"
+            loading={isLoading}
+            disabled={isLoading}
+            onClick={() => setIsLoading(true)}
+          >
+            Click me!
+        </ActionButton>
+      </>
+      );
+    }}
+  </Story>
+</Canvas>
+
+### Action successful before loading min duration
+
+<Canvas>
+  <Story name="Action successful before loading min duration">
+    {() => {
+      const [isLoading, setIsLoading] = useState(false);
+      return (
+        <>
+          <ActionButton
+            appearance="positive"
+            loading={isLoading}
+            disabled={isLoading}
+            onClick={() => {
+              setIsLoading(true);
+              setTimeout(() => {
+                setIsLoading(false);
+              }, 200) 
+          }}>
+            Click me!
+        </ActionButton>
+      </>
+      );
+    }}
   </Story>
 </Canvas>
 

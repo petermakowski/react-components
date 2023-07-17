@@ -17,33 +17,12 @@ export enum Label {
 
 export type Props = PropsWithSpread<
   {
-    /**
-     * The appearance of the button.
-     */
     appearance?: ButtonProps["appearance"];
-    /**
-     * The content of the button.
-     */
     children?: ReactNode;
-    /**
-     * Optional class(es) to pass to the button element.
-     */
     className?: ClassName;
-    /**
-     * Whether the button should be disabled.
-     */
     disabled?: boolean;
-    /**
-     * Whether the button should display inline.
-     */
     inline?: boolean;
-    /**
-     * Whether the button should be in the loading state.
-     */
     loading?: boolean;
-    /**
-     * Whether the button should be in the success state.
-     */
     success?: boolean;
   },
   ButtonHTMLAttributes<HTMLButtonElement>
@@ -63,29 +42,27 @@ const ActionButton = ({
   const [width, setWidth] = useState<number | null>();
   const [showLoader, setShowLoader] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
+  const [isInitialLoading, setIsInitialLoading] = useState(true);
   const ref = useRef<HTMLButtonElement>(null);
 
-  // Set up loader timer
   useEffect(() => {
     let loaderTimeout: number;
 
     if (loading) {
-      // Explicitly set button dimensions
-      if (ref.current && !!ref.current.getBoundingClientRect()) {
-        setHeight(ref.current.getBoundingClientRect().height);
-        setWidth(ref.current.getBoundingClientRect().width);
-      }
+      setIsInitialLoading(false);
+      loaderTimeout = window.setTimeout(() => {
+        setShowLoader(true);
+      }, LOADER_MIN_DURATION);
+    } else if (loading) {
       setShowLoader(true);
     }
 
-    if (!loading && showLoader) {
-      loaderTimeout = window.setTimeout(() => {
-        setShowLoader(false);
-
-        if (success) {
-          setShowSuccess(true);
-        }
-      }, LOADER_MIN_DURATION);
+    if (!loading) {
+      window.clearTimeout(loaderTimeout);
+      setShowLoader(false);
+      if (success) {
+        setShowSuccess(true);
+      }
     }
 
     if (!loading && !showLoader) {
@@ -94,9 +71,8 @@ const ActionButton = ({
     }
 
     return () => window.clearTimeout(loaderTimeout);
-  }, [loading, showLoader, success]);
+  }, [loading, showLoader, success, isInitialLoading]);
 
-  // Set up success timer
   useEffect(() => {
     let successTimeout: number;
 
@@ -125,10 +101,6 @@ const ActionButton = ({
   const icon = (showLoader && "spinner") || (showSuccess && "success") || null;
   const iconLight = appearance === "positive" || appearance === "negative";
 
-  // This component uses the base button element instead of the Button component
-  // as the button requires a ref and Button would have to be updated to use
-  // forwardRef which is not currently supported by components that use
-  // typescript generics.
   return (
     <button
       className={buttonClasses}
